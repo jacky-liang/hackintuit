@@ -1,9 +1,11 @@
-import SocketServer
 import socket
+from SocketServer import TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler
+from urlparse import parse_qs
+
 import json
 import logging 
-from urlparse import parse_qs
+
 import tflearn
 import joblib
 import numpy as np
@@ -24,17 +26,22 @@ model.set_weights(l1.b, data_loaded['l1b'])
 model.set_weights(l2.W, data_loaded['l2W'])
 model.set_weights(l2.b, data_loaded['l2b'])
 
-def perform_prediction(params):
-    logging.info("Performing prediction for {0}".format(params))
-    
+def get_real_estate_data(salary):
+    return {'hello':'world'}
+
+def get_results(params):
+    logging.info("Performing computation for {0}".format(params))
     val = float(params['x'][0])
     X = np.array([[val]])
+    salary =model.predict(X)[0][0]
     
-    y = model.predict(X)
+    return_data = get_real_estate_data(salary)
     
-    return {'y':y}
-
-class MyTCPServer(SocketServer.TCPServer):
+    return_data.update({'salary':salary})
+    
+    return return_data
+    
+class MyTCPServer(TCPServer):
     def server_bind(self):
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(self.server_address)
@@ -46,14 +53,13 @@ class MyHandler(BaseHTTPRequestHandler):
             raw_params = self.path[self.path.index('?')+1:]
             params = parse_qs(raw_params)
             
-            result = perform_prediction(params)
+            result = get_results(params)
             
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps(result))            
 
-port = 8080
-httpd = MyTCPServer(("", port), MyHandler)
+httpd = MyTCPServer(("", 8080), MyHandler)
 logging.info("Serving...")
 httpd.serve_forever()
