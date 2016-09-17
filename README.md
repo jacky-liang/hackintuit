@@ -1,6 +1,7 @@
 # Celeries
 
-###
+We used data from the American Community Survey 5-Year Data in the states of California, New York, Washington, Florida, Texax, and Illinois for persons. We cleaned the data to use 5 parameters: state, sex, stem, marriage status, and total income.
+We used data from the American Community Survey 5-Year Data in the states of California, New York, Washington, Florida, Texas, and Illinois for persons. We cleaned the data to use 5 parameters: state, sex, stem, marriage status, and total income.
 
 ### Training the Neural Net
 We take in a number of features that are representative of income such as location, age, and occupation category.  We run a fully connected neural network with 3 hidden layers of sizes 100, 100, and 50 respectively using RELU activation.  We use the l2 norm for loss.
