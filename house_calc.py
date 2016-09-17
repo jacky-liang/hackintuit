@@ -37,3 +37,5 @@ def generate_lists(incomes, col, house_prices, states):
      for state in states:
      	can_buy_house(income[state], col[state], house_prices[state], 4, 20, 
      		  cant_afford, cant_afford_hpay, can_afford_hpay, state)
+     return (cant_afford, cant_afford_hpay, can_afford_hpay)
+
