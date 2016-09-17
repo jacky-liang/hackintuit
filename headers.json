@@ -1,0 +1,8 @@
+{
+	"ST" : "state",
+	"AGEP" : "age",
+	"SEX" : "sex",
+	"SCIENGP" : "stem",
+	"MAR" : "married",
+	"PINCP" : "total income"
+}
