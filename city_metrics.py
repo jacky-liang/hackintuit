@@ -18,6 +18,23 @@ def debt_to_income(salary, price):
 
 ############################################################################################
 
+def get_metrics(city, salary):
+    sfr_price = SFR_PRICES[city]
+    con_price = CON_PRICES[city]
+    expected_salary = salary
+
+    city_dict = dict()
+
+    city_dict['sfr_price'] = sfr_price
+    city_dict['con_price'] = con_price
+    city_dict['time_to_house'] = time_to_afford(expected_salary, sfr_price)
+    city_dict['time_to_con'] = time_to_afford(expected_salary, con_price)
+    city_dict['expected_salary'] = expected_salary
+    city_dict['house_hardship'] = debt_to_income(expected_salary, sfr_price)
+    city_dict['con_hardship'] = debt_to_income(expected_salary, con_price)
+
+    return city_dict
+
 def city_metrics(state_salaries):
     cities = ['sf', 'sd', 'la', 'se', 'au','ny']
     city_to_state = {'sf':'CA', 'sd':'CA', 'la':'CA', 'se':'WA', 'au':'TX','ny':'NY'}
