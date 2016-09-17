@@ -11,6 +11,12 @@ def time_to_afford(salary, price):
 
     return down_payment / max_annual_contribution
 
+def debt_to_income(salary, price):
+    monthly_payments = float(price) / 200000 * 1000
+    annual_payments = 12 * monthly_payments
+    return annual_payments / salary * 100
+
+############################################################################################
 
 def city_metrics(state_salaries):
     cities = ['sf', 'sd', 'la', 'se', 'au','ny']
@@ -19,15 +25,17 @@ def city_metrics(state_salaries):
     def get_metrics(city):
         sfr_price = SFR_PRICES[city]
         con_price = CON_PRICES[city]
-        state_salary = state_salaries[city_to_state[city]]
+        expected_salary = state_salaries[city_to_state[city]]
 
         city_dict = dict()
 
         city_dict['sfr_price'] = sfr_price
         city_dict['con_price'] = con_price
-        city_dict['time_to_house'] = time_to_afford(state_salary, sfr_price)
-        city_dict['time_to_con'] = time_to_afford(state_salary, con_price)
-        city_dict['avg_salary'] = state_salary
+        city_dict['time_to_house'] = time_to_afford(expected_salary, sfr_price)
+        city_dict['time_to_con'] = time_to_afford(expected_salary, con_price)
+        city_dict['expected_salary'] = expected_salary
+        city_dict['house_hardship'] = debt_to_income(expected_salary, sfr_price)
+        city_dict['con_hardship'] = debt_to_income(expected_salary, con_price)
 
         return city_dict
 
@@ -39,5 +47,5 @@ def city_metrics(state_salaries):
 
     return d
 
-ans = city_metrics({'CA': 100000, 'WA': 100000, 'TX':100000, 'NY':100000})
+ans = city_metrics({'CA': 100000, 'WA': 90000, 'TX':800000, 'NY':120000})
 print ans['sd']['time_to_house']
