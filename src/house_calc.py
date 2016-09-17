@@ -1,8 +1,8 @@
 import math
 #this is working as expected
 def yearly_payment (house_price, interest, percent_down):
-	c = interest/(1200)
-	return 12*(house_price*(1 - percent_down/100)) * ( (c * (1 + c) ** 360 ) / ( ((1 + c ) **360) - 1 ) )
+	c = interest/(1200.)
+	return 12.*(house_price*(1. - percent_down/100.)) * ( (c * (1. + c) ** 360. ) / ( ((1.  + c ) **360.) - 1. ) )
 
 def can_buy_house(income, col, house_price, interest, percent_down, 
 	                        cant_afford_col, cant_afford_mor, can_afford_house, state):
@@ -35,7 +35,7 @@ def generate_lists(incomes, col, house_prices, states):
      cant_afford_hpay = []
      can_afford_hpay = []
      for state in states:
-     	can_buy_house(income[state], col[state], house_prices[state], 4, 20, 
+     	can_buy_house(incomes[state], col[state], house_prices[state], 4, 20, 
      		  cant_afford, cant_afford_hpay, can_afford_hpay, state)
      return (cant_afford, cant_afford_hpay, can_afford_hpay)
 
