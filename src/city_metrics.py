@@ -31,8 +31,8 @@ def get_metrics(city, salary):
     city_dict['time_to_house'] = time_to_afford(expected_salary, sfr_price)
     city_dict['time_to_con'] = time_to_afford(expected_salary, con_price)
     city_dict['expected_salary'] = expected_salary
-    city_dict['house_hardship'] = debt_to_income(expected_salary, sfr_price)
-    city_dict['con_hardship'] = debt_to_income(expected_salary, con_price)
+    city_dict['house_hardship'] = min(100, debt_to_income(expected_salary, sfr_price))
+    city_dict['con_hardship'] = min(100, debt_to_income(expected_salary, con_price))
 
     return city_dict
 
