@@ -1,5 +1,6 @@
 SFR_PRICES = {'sf': 801880, 'sd': 535727, 'la':548553, 'se':441305, 'au':268904,'ny':1551019}
 CON_PRICES = {'sf': 716936, 'sd': 395414, 'la':557365, 'se':300265, 'au':207049,'ny':1104667}
+COST_OF_LIVING = {'sf': 1093.61*12, 'sd': 879.52*12, 'la':923.21*12, 'se':999.50*12, 'au':789.09*12,'ny':1166.64*12}
 
 def time_to_afford(salary, price):
     #Based on federal Guidelines
