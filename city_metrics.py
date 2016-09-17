@@ -14,11 +14,12 @@ def time_to_afford(salary, price):
 
 def city_metrics(state_salaries):
     cities = ['sf', 'sd', 'la', 'se', 'au','ny']
+    city_to_state = {'sf':'CA', 'sd':'CA', 'la':'CA', 'se':'WA', 'au':'TX','ny':'NY'}
 
     def get_metrics(city):
         sfr_price = SFR_PRICES[city]
         con_price = CON_PRICES[city]
-        state_salary = state_salaries[city]
+        state_salary = state_salaries[city_to_state[city]]
 
         city_dict = dict()
 
@@ -38,5 +39,5 @@ def city_metrics(state_salaries):
 
     return d
 
-ans = city_metrics({'sf': 100000, 'sd': 100000, 'la':100000, 'se':100000, 'au':100000,'ny':100000})
+ans = city_metrics({'CA': 100000, 'WA': 100000, 'TX':100000, 'NY':100000})
 print ans['sd']['time_to_house']
