@@ -6,6 +6,7 @@ def yearly_payment (house_price, interest, percent_down):
 
 def trunc_hunds(val):
 	return ((float)((int)(val*100 + .5)))/100
+
 def can_buy_house(income, col, house_price, interest, percent_down, 
 	                        cant_afford_col, cant_afford_mor, can_afford_house, city):
 	#checking if can afford col
@@ -33,6 +34,10 @@ def can_buy_house(income, col, house_price, interest, percent_down,
 #returns 3 lists: places can't aford col, can't afford house payment, can afford house payment
 # for can afford h payment list holds tuples with: 
 # (state, years to make down payment, house payment, percent income to h payment, percent of income savings, dollar savings)
+#example return based off of test data on bottom:
+#(['Atlanta'], ['LA'], [('Miami', 2000.0, 2.0, 458.32, 7.64, 541.68, 9.03)])
+#says can't live in atlanta, can live in LA but cant afford house, can afford in Miami with additional info
+#as described
 def generate_lists(incomes, col, house_prices, cities):
      cant_afford = []
      cant_afford_hpay = []
