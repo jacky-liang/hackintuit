@@ -45,14 +45,16 @@ def make_filtered_new_csv(infilepath, outfilepath, headers):
             out_writer.writerow(filtered_row)
         print 'finished writing for: ' + outfilepath
 
-def get_all_pcsv(url, csv_names, dest, headers):
+def get_all_pcsv(url, csv_names, directory, headers, onefile=None):
     organization = {}
     for name in csv_names:
         if name[4] != 'p':
             continue
         print name
-        dirpath = os.path.join(dest, name[:-4])
+        dirpath = os.path.join(directory, name[:-4])
         zippath = os.path.join(dirpath, name)
+        id = name[4:7]
+        filepath = os.path.join(dirpath, "ss13{}.csv".format(id))
         if not os.path.exists(dirpath):
             print 'creating directory: ' + dirpath
             os.makedirs(dirpath)
@@ -67,12 +69,12 @@ def get_all_pcsv(url, csv_names, dest, headers):
                         os.remove(os.path.join(parent, fn))
                     else:
                         organization[name] = fn
-        id = name[4:7]
-        filepath = os.path.join(dirpath, "ss13{}.csv".format(id))
-        new_filepath = os.path.join(dirpath, "filtered_ss13{}.csv".format(id))
-        make_filtered_new_csv(filepath, new_filepath, headers)
-        os.remove(filepath)
-
+        if onefile != None:
+            make_filtered_new_csv(filepath, onefile, headers)
+        else:
+            new_filepath = os.path.join(dirpath, "filtered_ss13{}.csv".format(id))
+            make_filtered_new_csv(filepath, new_filepath, headers)
+            os.remove(filepath)
     return organization
 
 if __name__ == "__main__":
@@ -80,13 +82,16 @@ if __name__ == "__main__":
         headers = json.load(data_file)
 
     url = "http://www2.census.gov/acs2013_5yr/pums/"
-    # csv_names = scrape_names_from_tag_a(url)
-    # print csv_names
-    dest = "{}/{}".format(os.getcwd(), "data")
-    if not os.path.isdir(dest):
-        os.makedirs(dest)
-    csv_names = ['csv_pme.zip']
-    organization = get_all_pcsv(url, csv_names, dest, headers)
+
+    # to use only a few states, assign to csv_names a list with the corresponding filenames
+    csv_names = scrape_names_from_tag_a(url)
+    print csv_names
+
+    directory = "{}/{}".format(os.getcwd(), "data")
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+    fatdata = "{}/{}".format(directory, "fatdata.csv")
+    organization = get_all_pcsv(url, csv_names, directory, headers, fatdata)
 
     with open('organization.json', 'w') as fp:
         json.dump(organization, fp)
