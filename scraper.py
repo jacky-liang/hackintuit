@@ -18,35 +18,99 @@ def scrape_names_from_tag_a(url):
             csv_names.append(a.string)
     return csv_names
 
-def get_column_indices(header_line, headers):
+def get_column_indices(header_line, headers, order=None):
     positions, i = {}, 0
-    positions["order"] = []
+    if order == None:
+        positions["order"] = []
+    else:
+        positions["order"] = order
     for h in header_line:
         h = h.upper().strip()
         if h in headers:
             positions[h] = i
-            positions["order"].append(h)
+            if order == None:
+                positions["order"].append(h)
         i += 1
     return positions
 
-def make_filtered_new_csv(infilepath, outfilepath, headers):
+def make_filtered_csv(infilepath, outfilepath, headers, writeHeader=True, order=None):
     users_dict = {}
     with open(infilepath, 'rb') as fpin, open(outfilepath, 'wb') as fpout:
         in_reader = csv.reader(fpin, delimiter=',')
         out_writer = csv.writer(fpout, delimiter=',')
         header_line = in_reader.next()
-        cols = get_column_indices(header_line, headers)
-        out_writer.writerow(cols["order"])
+        cols = get_column_indices(header_line, headers, order)
+        if writeHeader:
+            print 'wrote header'
+            # out_writer.writerow(cols["order"])
+            # hardcoding this
+            heading = ["CA", "NY", "FL", "TX", "IL", "WA", "AGE", "MAR", "SEX", "YES_STEM", "NO_STEM", "UNKNOWN_INDUSTRY", "INCOME"]
+            # this needs to be modified to only have the columns in cols
+            # out_writer.writerow(cols["order"])
+
+            # hardcode
+            out_writer.writerow(heading)
+
         print 'writing filtered csv: ' + outfilepath
         for row in in_reader:
             filtered_row = []
-            for c in cols["order"]:
-                filtered_row.append(row[cols[c]])
+            # for h in cols["order"]:
+            #     if h in headers:
+            #         filtered_row.append(row[cols[h]])
+
+            # hardcoding again lol
+            state = row[cols['ST']]
+            if state == '06':
+                filtered_row.extend((1, 0, 0, 0, 0, 0))
+            elif state == '36':
+                filtered_row.extend((0, 1, 0, 0, 0, 0))
+            elif state == '12':
+                filtered_row.extend((0, 0, 1, 0, 0, 0))
+            elif state == '48':
+                filtered_row.extend((0, 0, 0, 1, 0, 0))
+            elif state == '17':
+                filtered_row.extend((0, 0, 0, 0, 1, 0))
+            elif state == '53':
+                filtered_row.extend((0, 0, 0, 0, 0, 1))
+            else:
+                # ignore if not one of our preferred state
+                continue
+
+            age = int(row[cols['AGEP']])
+            if age > 35:
+                continue
+            filtered_row.append(age)
+
+            marriage_status = row[cols['MAR']]
+            if marriage_status == '1':
+                filtered_row.append(1)
+            else:
+                filtered_row.append(0)
+
+            is_stem = row[cols['SCIENGP']]
+            if is_stem == '1':
+                filtered_row.extend((1, 0, 0))
+            elif is_stem == '0':
+                filtered_row.extend((0, 1, 0))
+            else:
+                filtered_row.extend((0, 0, 1))
+
+            try:
+                income = int(row[cols['PINCP']])
+                if income <= 0:
+                    continue
+            except:
+                continue
+            filtered_row.append(income)
+
             out_writer.writerow(filtered_row)
         print 'finished writing for: ' + outfilepath
+        return cols["order"]
 
 def get_all_pcsv(url, csv_names, directory, headers, onefile=None):
     organization = {}
+    writeHeader = True
+    order = None
     for name in csv_names:
         if name[4] != 'p':
             continue
@@ -70,10 +134,11 @@ def get_all_pcsv(url, csv_names, directory, headers, onefile=None):
                     else:
                         organization[name] = fn
         if onefile != None:
-            make_filtered_new_csv(filepath, onefile, headers)
+            order = make_filtered_csv(filepath, onefile, headers, writeHeader, order)
+            writeHeader = False
         else:
             new_filepath = os.path.join(dirpath, "filtered_ss13{}.csv".format(id))
-            make_filtered_new_csv(filepath, new_filepath, headers)
+            order = make_filtered_new_csv(filepath, new_filepath, headers, order)
             os.remove(filepath)
     return organization
 
@@ -84,7 +149,10 @@ if __name__ == "__main__":
     url = "http://www2.census.gov/acs2013_5yr/pums/"
 
     # to use only a few states, assign to csv_names a list with the corresponding filenames
-    csv_names = scrape_names_from_tag_a(url)
+    # "CA", "NY", "FL", "TX", "IL", "WA"
+    csv_names = ['csv_pca.zip', 'csv_pny.zip', 'csv_pfl.zip', 'csv_ptx.zip', 'csv_pil.zip', 'csv_pwa.zip']
+    # csv_names = ['csv_pwa.zip', 'csv_pil.zip']
+    # csv_names = scrape_names_from_tag_a(url)
     print csv_names
 
     directory = "{}/{}".format(os.getcwd(), "data")
