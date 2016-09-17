@@ -37,7 +37,8 @@ def can_buy_house(income, col, house_price, interest, percent_down,
 #example return based off of test data on bottom:
 #(['Atlanta'], ['LA'], [('Miami', 2000.0, 2.0, 458.32, 7.64, 541.68, 9.03)])
 #says can't live in atlanta, can live in LA but cant afford house, can afford in Miami with additional info
-#as described
+#in order: 1. City name 2.Down Payment 3. Years to save down payment 4. House payment 4. percent of income spent on house payment
+#5. amount savings after paying col and house payment, percent of income saved 
 def generate_lists(incomes, col, house_prices, cities):
      cant_afford = []
      cant_afford_hpay = []
