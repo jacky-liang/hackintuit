@@ -35,7 +35,7 @@ def get_column_indices(header_line, headers, order=None):
 
 def make_filtered_csv(infilepath, outfilepath, headers, writeHeader=True, order=None):
     users_dict = {}
-    with open(infilepath, 'rb') as fpin, open(outfilepath, 'wb') as fpout:
+    with open(infilepath, 'rb') as fpin, open(outfilepath, 'ab') as fpout:
         in_reader = csv.reader(fpin, delimiter=',')
         out_writer = csv.writer(fpout, delimiter=',')
         header_line = in_reader.next()
@@ -77,7 +77,7 @@ def make_filtered_csv(infilepath, outfilepath, headers, writeHeader=True, order=
                 continue
 
             age = int(row[cols['AGEP']])
-            if age > 35:
+            if age < 22 or age > 35:
                 continue
             filtered_row.append(age)
 
@@ -86,6 +86,16 @@ def make_filtered_csv(infilepath, outfilepath, headers, writeHeader=True, order=
                 filtered_row.append(1)
             else:
                 filtered_row.append(0)
+
+            sex = row[cols['SEX']]
+            # male
+            if sex == '1':
+                filtered_row.append(1)
+            # female
+            elif sex == '2':
+                filtered_row.append(0)
+            else:
+                continue
 
             is_stem = row[cols['SCIENGP']]
             if is_stem == '1':
@@ -138,7 +148,7 @@ def get_all_pcsv(url, csv_names, directory, headers, onefile=None):
             writeHeader = False
         else:
             new_filepath = os.path.join(dirpath, "filtered_ss13{}.csv".format(id))
-            order = make_filtered_new_csv(filepath, new_filepath, headers, order)
+            order = make_filtered_csv(filepath, new_filepath, headers, True, order)
             os.remove(filepath)
     return organization
 
@@ -159,7 +169,7 @@ if __name__ == "__main__":
     if not os.path.isdir(directory):
         os.makedirs(directory)
     fatdata = "{}/{}".format(directory, "fatdata.csv")
-    organization = get_all_pcsv(url, csv_names, directory, headers, fatdata)
+    organization = get_all_pcsv(url, csv_names, directory, headers)
 
     with open('organization.json', 'w') as fp:
         json.dump(organization, fp)
