@@ -4,5 +4,10 @@
 	"SEX" : "sex",
 	"SCIENGP" : "stem",
 	"MAR" : "married",
-	"PINCP" : "total income"
+	"PINCP" : "total income",
+	"ADJINC" : "income adjustment factor",
+	"SCHL" : "educational attainment",
+	"ANC1P05" : "recoded detailed ancestry",
+	"FOD1P" : "recoded field of degree",
+	"WKHP" : "usual hours worked per week"
 }
